@@ -14,8 +14,8 @@ public class Order {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "custommer_id")
-    private Customer customers;
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
 
     private BigDecimal total;
 
@@ -23,4 +23,42 @@ public class Order {
     private OrderStatus status = OrderStatus.PENDING;
 
     private LocalDateTime createdAt;
+
+    public Order() {}
+
+    public Long getId() {
+        return id;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
