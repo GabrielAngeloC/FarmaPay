@@ -6,12 +6,11 @@ import br.com.gabriel.araujo_pay.domain.Payment;
 import br.com.gabriel.araujo_pay.domain.PaymentStatus;
 import br.com.gabriel.araujo_pay.dto.payment.PaymentRequest;
 import br.com.gabriel.araujo_pay.dto.payment.PaymentResponse;
+import br.com.gabriel.araujo_pay.exception.NotFoundException;
 import br.com.gabriel.araujo_pay.repository.OrderRepository;
 import br.com.gabriel.araujo_pay.repository.PaymentRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,18 +28,18 @@ public class PaymentService {
 
     @Transactional
     public PaymentResponse create(PaymentRequest paymentRequest) {
-        Order order = orderRepository.findById(paymentRequest.orderId()).orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+        Order order = orderRepository.findById(paymentRequest.orderId()).orElseThrow(() -> new NotFoundException("Pedido não encontrado"));
 
         if(order.getStatus() == OrderStatus.CANCELED) {
-            throw new RuntimeException("Não é possível pagar um pedido cancelado");
+            throw new NotFoundException("Não é possível pagar um pedido cancelado");
         }
 
         if(paymentRepository.existsByOrder(order)){
-            throw new RuntimeException("já existe um pagamento para este pedido");
+            throw new NotFoundException("já existe um pagamento para este pedido");
         }
 
         if(paymentRequest.amountPaid().compareTo(order.getTotal()) != 0){
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"Pedido não econtrado");
+            throw new NotFoundException("Pedido não econtrado");
         }
 
         Payment payment = new Payment();

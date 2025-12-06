@@ -3,6 +3,8 @@ package br.com.gabriel.araujo_pay.service;
 import br.com.gabriel.araujo_pay.domain.Customer;
 import br.com.gabriel.araujo_pay.dto.customer.CustomerRequest;
 import br.com.gabriel.araujo_pay.dto.customer.CustomerResponse;
+import br.com.gabriel.araujo_pay.exception.BusinessException;
+import br.com.gabriel.araujo_pay.exception.NotFoundException;
 import br.com.gabriel.araujo_pay.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +24,7 @@ public class CustomerService {
     public CustomerResponse create(CustomerRequest request) {
 
         if (repository.existsByEmail(request.getEmail())){
-            throw new RuntimeException("email já cadastrado");
+            throw new BusinessException("email já cadastrado");
         }
 
         Customer customer = new Customer();
@@ -37,7 +39,7 @@ public class CustomerService {
 
 @Transactional
     public CustomerResponse update(Long Id, CustomerRequest request) {
-        Customer customer = repository.findById(Id).orElseThrow( () -> new RuntimeException("Id inválido"));
+        Customer customer = repository.findById(Id).orElseThrow( () -> new BusinessException("Id inválido"));
 
         customer.setName(request.getName());
         customer.setEmail(request.getEmail());
@@ -52,14 +54,14 @@ public class CustomerService {
     public List<CustomerResponse> findAll() {
         List<Customer> customers = repository.findAll();
         if (customers.isEmpty()) {
-            throw new RuntimeException("Não há clientes");
+            throw new NotFoundException("Não há Clientes");
         }
         return customers.stream().map(this::toResponse).toList();
     }
 
     @Transactional
     public CustomerResponse findById(Long Id) {
-        Customer customer = repository.findById(Id).orElseThrow(() -> new RuntimeException("Cliente não eocntrado"));
+        Customer customer = repository.findById(Id).orElseThrow(() -> new BusinessException("Cliente não encontrado"));
 
         return toResponse(customer);
     }
@@ -67,7 +69,7 @@ public class CustomerService {
     @Transactional
     public void delete(Long Id) {
         if (!repository.existsById(Id)) {
-            throw new RuntimeException("Cliente não encontrado");
+            throw new NotFoundException("Cliente não encontrado");
         }
         repository.deleteById(Id);
     }

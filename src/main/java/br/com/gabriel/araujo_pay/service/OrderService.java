@@ -6,6 +6,7 @@ import br.com.gabriel.araujo_pay.domain.Customer;
 import br.com.gabriel.araujo_pay.dto.order.OrderRequest;
 import br.com.gabriel.araujo_pay.dto.order.OrderResponse;
 import br.com.gabriel.araujo_pay.dto.order.OrderStatusUpdateRequest;
+import br.com.gabriel.araujo_pay.exception.NotFoundException;
 import br.com.gabriel.araujo_pay.repository.OrderRepository;
 import br.com.gabriel.araujo_pay.repository.CustomerRepository;
 import org.springframework.http.HttpStatus;
@@ -46,7 +47,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse updateStatus(Long Id, OrderStatusUpdateRequest  request) {
-        Order order = orderRepository.findById(Id).orElseThrow( () -> new RuntimeException("Pedido não encontrado"));
+        Order order = orderRepository.findById(Id).orElseThrow( () -> new NotFoundException("Pedido não encontrado"));
 
         order.setStatus(request.status());
 
@@ -62,14 +63,14 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse findById(Long Id){
-        Order order = orderRepository.findById(Id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Pedido não econtrado"));
+        Order order = orderRepository.findById(Id).orElseThrow(() -> new NotFoundException("Pedido não econtrado"));
 
         return toResponse(order);
     }
 
     @Transactional(readOnly = true)
     public List<OrderResponse> findByCustomerId(Long customerId){
-        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Cliente não econtrado"));
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new NotFoundException("Cliente não econtrado"));
 
         return orderRepository.findByCustomer(customer).stream().map(this::toResponse).toList();
 
@@ -78,7 +79,7 @@ public class OrderService {
     @Transactional
     public void delete(Long Id){
         if (!orderRepository.existsById(Id)) {
-            throw new RuntimeException("Pedido não encontrado");
+            throw new NotFoundException("Pedido não encontrado");
         }
         orderRepository.deleteById(Id);
     }
