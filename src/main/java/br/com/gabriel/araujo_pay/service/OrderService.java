@@ -8,8 +8,10 @@ import br.com.gabriel.araujo_pay.dto.order.OrderResponse;
 import br.com.gabriel.araujo_pay.dto.order.OrderStatusUpdateRequest;
 import br.com.gabriel.araujo_pay.repository.OrderRepository;
 import br.com.gabriel.araujo_pay.repository.CustomerRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +35,7 @@ public class OrderService {
         order.setCustomer(customer);
         order.setTotal(request.total());
         order.setStatus(OrderStatus.PENDING);
+        order.setCreatedAt(LocalDateTime.now());
 
         orderRepository.save(order);
 
@@ -59,7 +62,8 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse findById(Long Id){
-        Order order = orderRepository.findById(Id).orElseThrow(() -> new RuntimeException("Pedido não econtrado"));
+        Order order = orderRepository.findById(Id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Pedido não econtrado"));
+
         return toResponse(order);
     }
 
@@ -81,14 +85,14 @@ public class OrderService {
 
 
     private OrderResponse toResponse(Order order){
+
         return new OrderResponse(
                 order.getId(),
                 order.getCustomer().getId(),
                 order.getCustomer().getName(),
                 order.getCustomer().getEmail(),
                 order.getTotal(),
-                order.getStatus(),
-                order.getCreatedAt()
+                order.getStatus()
         );
     }
 }

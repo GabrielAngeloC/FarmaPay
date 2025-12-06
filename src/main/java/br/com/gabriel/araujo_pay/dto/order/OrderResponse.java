@@ -12,8 +12,5 @@ public record OrderResponse(
      String customerName,
      String customerEmail,
      BigDecimal total,
-     OrderStatus status,
-     LocalDateTime createdAt
-
-
+     OrderStatus status
 ){}

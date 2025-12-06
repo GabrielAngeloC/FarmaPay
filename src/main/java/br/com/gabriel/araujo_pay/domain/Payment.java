@@ -2,15 +2,18 @@ package br.com.gabriel.araujo_pay.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "payments")
 public class Payment {
 
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,49 +36,4 @@ public class Payment {
 
     public Payment() {
     }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public BigDecimal getAmountPaid() {
-        return amountPaid;
-    }
-
-    public PaymentMethod getPaymentMethod() {
-        return method;
-    }
-
-    public PaymentStatus getPaymentStatus() {
-        return status;
-    }
-
-    public LocalDateTime getPaidAt() {
-        return paidAt;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setAmountPaid(BigDecimal amountPaid) {
-        this.amountPaid = amountPaid;
-    }
-
-    public void setPaymentMethod(PaymentMethod method) {
-        this.method = method;
-    }
-
-    public void setPaymentStatus(PaymentStatus status) {
-        this.status = status;
-    }
-
-    public void setPaidAt(LocalDateTime paidAt) {
-        this.paidAt = paidAt;
-    }
-
 }
